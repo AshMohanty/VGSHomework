@@ -2,7 +2,7 @@ const vgsForm = window.VGSCollect.create(
   'tnt3qmfciiv',
   'sandbox',
   (state) => {}
-).setRouteId('431f97a0-cdba-48af-92f7-4aee1d7a82bd');
+).setRouteId('2ddf5d66-6dba-492a-9fdb-48d2bf0be540');
 
 const css = {
   boxSizing: 'border-box',
@@ -64,6 +64,38 @@ const submitVGSCollectForm = () => {
 
 document.getElementById('vgs-collect-form').addEventListener('submit', (e) => {
   e.preventDefault();
+
+  // Obtain the tokenized card data
+  const tokenizedCardData = {
+    card_number: cardNumber.value,
+    card_cvc: cardSecurityCode.value,
+    card_exp: cardExpDate.value
+  };
+
+  // Send tokenized card data to the server
+  fetch('https://https://vgs-server.vercel.app/process-payment', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(tokenizedCardData)
+  })
+  .then(response => {
+    if (response.ok) {
+      // Server responded with success
+      displayMessage('Payment successful! Your payment has been processed.');
+      displayPaymentCompleteMessage();
+    } else {
+      // Server responded with error
+      displayMessage('Server error occurred. Please try again later.');
+    }
+  })
+  .catch(error => {
+    // Network error occurred
+    displayMessage('Network error occurred. Please try again later.');
+  });
+
+  // Submit the VGS form
   submitVGSCollectForm();
 });
 
